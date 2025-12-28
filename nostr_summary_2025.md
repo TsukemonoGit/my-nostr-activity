@@ -157,4 +157,6 @@
 
 ---
 **Note:** This report was generated mechanically from local JSON data.
-*Generated on: 2025/12/28 17:29:51*
+*Generated on: 2025/12/28 17:40:03*
+
+This report was created by [my-nostr-activity](https://github.com/TsukemonoGit/my-nostr-activity).

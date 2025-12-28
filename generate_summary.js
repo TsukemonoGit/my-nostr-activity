@@ -72,6 +72,7 @@ function generateSummary() {
     md += `---\n`;
     md += `**Note:** This report was generated mechanically from local JSON data.\n`;
     md += `*Generated on: ${new Date().toLocaleString()}*\n`;
+    md += `\nThis report was created by [my-nostr-activity](https://github.com/TsukemonoGit/my-nostr-activity).\n`;
 
     // 4. Save file
     const outputPath = 'nostr_summary_2025.md';
