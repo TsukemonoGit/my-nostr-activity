@@ -1,26 +1,25 @@
-const { NostrFetcher } = require('nostr-fetch');
-const fs = require('fs');
+const { NostrFetcher } = require("nostr-fetch");
+const fs = require("fs");
+const path = require("path");
 
-const { RELAYS, PUBKEYS } = require('./config');
-
-const START_YEAR = 2025;
-const CURRENT_DATE = new Date();
+const { RELAYS, PUBKEYS, YEAR } = require("./config");
 
 async function fetchNostrActivity() {
   const fetcher = NostrFetcher.init();
-  
-  console.log('Fetching Nostr text notes (kind 1) for 2025 using nostr-fetch...');
+
+  console.log(
+    `Fetching Nostr text notes (kind 1) for ${YEAR} using nostr-fetch...`
+  );
 
   let allEvents = [];
   const startMonth = 0; // Jan
   const now = new Date();
-  const currentYear = now.getFullYear();
   const currentMonth = now.getMonth();
 
   for (let month = startMonth; month <= currentMonth; month++) {
-    const monthLabel = `${currentYear}-${String(month + 1).padStart(2, '0')}`;
-    const since = Math.floor(new Date(currentYear, month, 1).getTime() / 1000);
-    const until = Math.floor(new Date(currentYear, month + 1, 1).getTime() / 1000);
+    const monthLabel = `${YEAR}-${String(month + 1).padStart(2, "0")}`;
+    const since = Math.floor(new Date(YEAR, month, 1).getTime() / 1000);
+    const until = Math.floor(new Date(YEAR, month + 1, 1).getTime() / 1000);
 
     process.stdout.write(`- Fetching ${monthLabel}... `);
 
@@ -42,17 +41,21 @@ async function fetchNostrActivity() {
     console.log(`Total events fetched: ${allEvents.length}`);
 
     // Final dedup (though nostr-fetch handles it, just in case)
-    const uniqueEvents = Array.from(new Map(allEvents.map(ev => [ev.id, ev])).values());
-    
+    const uniqueEvents = Array.from(
+      new Map(allEvents.map((ev) => [ev.id, ev])).values()
+    );
+
     // Sort chronologically (ascending)
     uniqueEvents.sort((a, b) => a.created_at - b.created_at);
 
     console.log(`Total unique events: ${uniqueEvents.length}`);
-    fs.writeFileSync('nostr_activity.json', JSON.stringify(uniqueEvents, null, 2), 'utf-8');
-    console.log('Saved result to nostr_activity.json');
-
+    const outDir = path.join(__dirname, YEAR);
+    if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+    const outPath = path.join(outDir, "nostr_activity.json");
+    fs.writeFileSync(outPath, JSON.stringify(uniqueEvents, null, 2), "utf-8");
+    console.log(`Saved result to ${outPath}`);
   } catch (err) {
-    console.error('Error processing events:', err.message);
+    console.error("Error processing events:", err.message);
   } finally {
     fetcher.shutdown();
   }
