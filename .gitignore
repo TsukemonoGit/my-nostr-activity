@@ -1,0 +1,10 @@
+node_modules/
+.env
+*.json
+!package.json
+!package-lock.json
+!nostr_viral_insights.json
+# Keep the viral insights as they are small and useful previews
+# But hide the 40MB+ raw files
+nostr_activity.json
+nostr_engagement.json
